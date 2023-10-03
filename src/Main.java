@@ -8,6 +8,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println(Regras.mostrarRegras());
         menuInicial();
+        System.out.println("Você Ganhou");
     }
 
     private static void menuInicial() {

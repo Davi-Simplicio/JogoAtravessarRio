@@ -83,7 +83,7 @@ public class Jogo {
     public boolean atravessar() throws PersonagemNaoExisteException, NaoPodeAtravessarException {
         if (vereficaJogo()) {
             Jangada jangada = this.objetos.jangada;
-            if (!jangada.jangada.isEmpty() && (jangada.jangada.contains(this.objetos.mae) || jangada.jangada.contains(this.objetos.pai) || jangada.jangada.contains(this.objetos.policial))) {
+            if (jangada.jangada.contains(this.objetos.mae) || jangada.jangada.contains(this.objetos.pai) || jangada.jangada.contains(this.objetos.policial)) {
                 if (jangada.getMargemDaJangada() == this.objetos.margemA) {
                     jangada.setMargemDaJangada(this.objetos.margemB);
                 } else {
@@ -91,10 +91,11 @@ public class Jogo {
                 }
                 jangada.getMargemDaJangada().adicionar(jangada.jangada);
                 jangada.remover(jangada.jangada);
+                return verificaVitoria();
             }
             throw new NaoPodeAtravessarException();
         }
-        return verificaVitoria();
+        return false;
     }
 
     public boolean vereficaJogo() {
