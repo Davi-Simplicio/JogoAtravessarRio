@@ -15,6 +15,13 @@ public class Margem implements IAdicionar,IRemover{
         }
         throw new PersonagemNaoExisteException();
     }
+    public ArrayList<Personagem> adicionar(ArrayList<Personagem>personagens) throws PersonagemNaoExisteException {
+        if (personagens !=null){
+            this.margem.addAll(personagens);
+            return personagens;
+        }
+        throw new PersonagemNaoExisteException();
+    }
 
     @Override
     public void remover(Personagem personagem) throws PersonagemNaoExisteException {
@@ -23,5 +30,8 @@ public class Margem implements IAdicionar,IRemover{
             return;
         }
         throw new PersonagemNaoExisteException();
+    }
+    public ArrayList<Personagem> mostrarMargem(){
+        return margem;
     }
 }

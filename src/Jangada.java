@@ -30,6 +30,14 @@ public class Jangada implements IAdicionar, IRemover {
         throw new PersonagemNaoExisteException();
     }
 
+    public void remover(ArrayList<Personagem>personagens) throws PersonagemNaoExisteException {
+        if (personagens != null) {
+            this.jangada.removeAll(personagens);
+            return;
+        }
+        throw new PersonagemNaoExisteException();
+    }
+
     public Margem getMargemDaJangada() {
         return margemDaJangada;
     }

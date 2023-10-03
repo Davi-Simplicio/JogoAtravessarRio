@@ -1,9 +1,12 @@
+import java.util.ArrayList;
+
 public class Jogo {
     private final Objetos objetos;
 
     public Jogo() {
         objetos = new Objetos();
         this.objetos.jangada.setMargemDaJangada(this.objetos.margemA);
+        this.objetos.margemA.margem.addAll(Personagem.getPersonagems());
     }
 
     public boolean verificaPrisioneiroSozinhoComFamilia() {
@@ -45,7 +48,7 @@ public class Jogo {
 
     public boolean verificaMaeTransportandoFilhos() {
         Jangada jangada = this.objetos.jangada;
-        if (jangada.jangada.contains(this.objetos.mae) && jangada.jangada.contains(this.objetos.filhoA) || jangada.jangada.contains(this.objetos.filhoB)) {
+        if (jangada.jangada.contains(this.objetos.mae) && (jangada.jangada.contains(this.objetos.filhoA) || jangada.jangada.contains(this.objetos.filhoB))) {
             throw new MaeTransportandoFilhosExcepiton();
         }
         return false;
@@ -65,32 +68,36 @@ public class Jogo {
         return false;
     }
 
+    public boolean verificaVitoria() {
+        return this.objetos.margemB.margem.size() >= 8;
+    }
+
     public boolean verificaPaiTransportandoFilhas() {
         Jangada jangada = this.objetos.jangada;
-        if (jangada.jangada.contains(this.objetos.pai) && jangada.jangada.contains(this.objetos.filhaA) || jangada.jangada.contains(this.objetos.filhaB)) {
+        if (jangada.jangada.contains(this.objetos.pai) && (jangada.jangada.contains(this.objetos.filhaA) || jangada.jangada.contains(this.objetos.filhaB))) {
             throw new PaiTransportandoFilhasException();
         }
         return false;
     }
 
-    public boolean atravessar() {
+    public boolean atravessar() throws PersonagemNaoExisteException, NaoPodeAtravessarException {
         if (vereficaJogo()) {
-        Jangada jangada = this.objetos.jangada;
-        if (!jangada.jangada.isEmpty() && jangada.jangada.contains(this.objetos.mae) || jangada.jangada.contains(this.objetos.pai)
-                || jangada.jangada.contains(this.objetos.policial)) {
-            if (jangada.getMargemDaJangada() == this.objetos.margemA) {
-                jangada.setMargemDaJangada(this.objetos.margemB);
+            Jangada jangada = this.objetos.jangada;
+            if (!jangada.jangada.isEmpty() && (jangada.jangada.contains(this.objetos.mae) || jangada.jangada.contains(this.objetos.pai) || jangada.jangada.contains(this.objetos.policial))) {
+                if (jangada.getMargemDaJangada() == this.objetos.margemA) {
+                    jangada.setMargemDaJangada(this.objetos.margemB);
                 } else {
                     jangada.setMargemDaJangada(this.objetos.margemA);
-                    vereficaJogo();
                 }
+                jangada.getMargemDaJangada().adicionar(jangada.jangada);
+                jangada.remover(jangada.jangada);
             }
             throw new NaoPodeAtravessarException();
         }
-        return true;
+        return verificaVitoria();
     }
 
-    public boolean vereficaJogo(){
+    public boolean vereficaJogo() {
         verificaFilhasSozinhasComOPaiSemAMae();
         verificaFilhosSozinhosComAMaeSemOPai();
         verificaPrisioneiroSozinhoComFamilia();
@@ -99,12 +106,48 @@ public class Jogo {
         return true;
 
     }
+
     public void tiraDaJangadaColocaNaMargem(Personagem personagem) throws PersonagemNaoExisteException {
+        System.out.println(personagem);
         this.objetos.jangada.remover(personagem);
         this.objetos.jangada.getMargemDaJangada().adicionar(personagem);
     }
-    public void tiraDaMargemColocaNaJangada(Personagem personagem) throws PersonagemNaoExisteException {
+
+    public void tiraDaMargemColocaNaJangada(Personagem personagem) throws PersonagemNaoExisteException, JangadaCheiaException {
         this.objetos.jangada.adicionar(personagem);
         this.objetos.jangada.getMargemDaJangada().remover(personagem);
+    }
+
+    public ArrayList<Personagem> mostrarMargemA() {
+        return this.objetos.margemA.mostrarMargem();
+    }
+
+    public ArrayList<Personagem> mostrarMargemB() {
+        return this.objetos.margemB.mostrarMargem();
+    }
+
+    public ArrayList<Personagem> mostrarMargemAtual() {
+        return this.objetos.jangada.getMargemDaJangada().mostrarMargem();
+    }
+
+    public ArrayList<Personagem> mostrarJangada() {
+        return this.objetos.jangada.jangada;
+    }
+
+    public Personagem procurarPersonagemNaMargem(int numero) throws PersonagemNaoExisteException {
+        for (Personagem personagemE : this.objetos.jangada.getMargemDaJangada().margem) {
+            if (personagemE.getId() == numero) {
+                return personagemE;
+            }
+        }
+        throw new PersonagemNaoExisteException();
+    }
+    public Personagem procurarPersonagemNaJangada(int numero) throws PersonagemNaoExisteException {
+        for (Personagem personagemE : this.objetos.jangada.jangada) {
+            if (personagemE.getId() == numero) {
+                return personagemE;
+            }
+        }
+        throw new PersonagemNaoExisteException();
     }
 }
